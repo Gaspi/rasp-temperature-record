@@ -13,7 +13,7 @@ DIST_SRC = $(patsubst ./%, $(INSTALL_FOLDER)/%, $(LOCAL_SRC))
 .PHONY: all install uninstall reinstall
 all: install
 
-install: $(APACHE_PATH)/sites-available/bibli.conf $(DATA_FOLDER)
+install: $(INSTALL_FOLDER)/ $(DIST_SRC) $(DATA_FOLDER) $(CRON_FILE)
 	$(Q)mkdir -m 775 -p "$(LOG_FOLDER)"
 	$(Q)rm -rf "$(LOG_FOLDER)/*"
 	$(Q)echo "Installation terminée !"
