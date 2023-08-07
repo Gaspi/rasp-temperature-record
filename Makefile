@@ -5,12 +5,12 @@ LOG_FOLDER=$(INSTALL_FOLDER)/logs
 DATA_FOLDER=$(INSTALL_FOLDER)/data
 
 # Compile with "make Q=" to display the commands that are run.
-Q=@
+Q = @
 
 LOCAL_SRC = $(shell find ./ -type f -name '*.js' -o -name '*.css' -o -name '*.html' -o -name '*.py')
 DIST_SRC = $(patsubst ./%, $(INSTALL_FOLDER)/%, $(LOCAL_SRC))
 
-.PHONY: all install uninstall reinstall
+.PHONY: all install uninstall reinstall clear-data
 all: install
 
 install: $(INSTALL_FOLDER)/ $(DIST_SRC) $(DATA_FOLDER) $(CRON_FILE)
