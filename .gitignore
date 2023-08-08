@@ -6,6 +6,8 @@ __pycache__/
 # C extensions
 *.so
 
+.Makefile.swp
+
 # Distribution / packaging
 .Python
 build/

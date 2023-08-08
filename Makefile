@@ -1,6 +1,6 @@
 INSTALL_FOLDER = /media/NASHDD1/Server/temperature-record
 
-CRON_FILE = /etc/cron.daily/rasp-temperature-record
+CRON_FILE = /etc/cron.hourly/temperature-record
 LOG_FOLDER = $(INSTALL_FOLDER)/logs
 DATA_FOLDER = $(INSTALL_FOLDER)/data
 
@@ -13,7 +13,7 @@ DIST_SRC = $(patsubst ./%, $(INSTALL_FOLDER)/%, $(LOCAL_SRC))
 .PHONY: all install uninstall reinstall cleardata
 all: install
 
-install: $(INSTALL_FOLDER)/ $(DIST_SRC) $(DATA_FOLDER) $(CRON_FILE)
+install: $(DIST_SRC) $(DATA_FOLDER) $(CRON_FILE)
 	$(Q)mkdir -m 775 -p "$(LOG_FOLDER)"
 	$(Q)rm -rf "$(LOG_FOLDER)/*"
 	$(Q)echo "Installation terminée !"
@@ -43,3 +43,4 @@ $(CRON_FILE): cron.sh
 $(DATA_FOLDER):
 	$(Q)mkdir -m 775 -p "$@"
 	$(Q)chmod -r a+rx "$@"
+
