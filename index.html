@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <title> Capteurs </title>
+  <meta charset="utf-8">
+  <!-- Bootstrap: CSS style -->
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap@4.6.2/dist/css/bootstrap.min.css" 
+      integrity="sha512-rt/SrQ4UNIaGfDyEXZtNcyWvQeOq0QLygHluFQcSjaGB04IxWhal71tKuzP6K8eYXYB6vJV4pHkXcmFGGQ1/0w==" 
+      crossorigin="anonymous"
+  />
+</head>
+<body>
+  <div style="height:100%;">
+    <canvas id="chart">
+    </canvas>
+  </div>
+</body>
+<script src="https://unpkg.com/jquery@2.2.4/dist/jquery.min.js"
+    integrity="sha512-DUC8yqWf7ez3JD1jszxCWSVB0DMP78eOyBpMa5aJki1bIRARykviOuImIczkxlj1KhVSyS16w2FSQetkD4UU2w==" 
+    crossorigin="anonymous"
+></script>
+<script src="https://unpkg.com/bootstrap@4.6.2/dist/js/bootstrap.min.js" 
+    integrity="sha512-7rusk8kGPFynZWu26OKbTeI+QPoYchtxsmPeBqkHIEXJxeun4yJ4ISYe7C6sz9wdxeE1Gk3VxsIWgCZTc+vX3g==" 
+    crossorigin="anonymous"
+></script>
+<script src="https://unpkg.com/chart.js@4.2.1/dist/chart.umd.js" 
+    integrity="sha512-vCUbejtS+HcWYtDHRF2T5B0BKwVG/CLeuew5uT2AiX4SJ2Wff52+kfgONvtdATqkqQMC9Ye5K+Td0OTaz+P7cw==" 
+    crossorigin="anonymous"
+></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
+</script>
+<script>
+
+const data_url = "data/records.csv";
+var records_data;
+
+// Objet représentant le graphique de la popup
+Chart.defaults.font.size = 14;
+Chart.defaults.font.family = 'Now Alt';
+var chart = new Chart(
+  document.getElementById('chart'),
+  {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: 'Température',
+          parsing: { yAxisKey: 'temperature' },
+          yAxisID: 'y',
+          //borderWidth: 2,
+          //borderColor: '#000000',
+          //backgroundColor: '#999999',
+          //pointRadius: 5,
+          //pointHoverRadius: 8
+        },
+        {
+          label: 'Humidité',
+          parsing: { yAxisKey: 'humidity' },
+          yAxisID: 'y1',
+          //borderWidth: 2,
+          //borderColor: '#000000',
+          //backgroundColor: '#999999',
+          //pointRadius: 5,
+          //pointHoverRadius: 8
+        },
+      ],
+    },
+    options: {
+      scales: {
+        xAxes: {
+          type: 'time',
+          distribution: 'linear',
+        },
+        y: {
+          type: 'linear',
+          display: true,
+          position: 'left',
+        },
+        y1: {
+          type: 'linear',
+          display: true,
+          position: 'right',
+          // grid line settings
+          grid: {
+            drawOnChartArea: false, // only want the grid lines for one axis to show up
+          },
+        },
+      },
+      parsing: {
+        xAxisKey: 'debut',
+      }
+    }
+  }
+);
+
+function mean(a) {
+  return (a.length > 0) ? a.reduce((a, b) => a + b, 0) / a.length || 0 : 0;
+}
+
+function parse_data(row) {
+  const res = {};
+  res.debut = new Date(row[0]+"T"+row[1]);
+  res.h_measures = [2,4,6,8,10].map((i)=>parseFloat(row[i]));
+  res.t_measures = [3,5,7,9,11].map((i)=>parseFloat(row[i]));
+  res.humidity    = mean( res.h_measures );
+  res.temperature = mean( res.t_measures );
+  res.fin = new Date(row[0]+"T"+row[12]);
+  return res;
+}
+
+function load(data) {
+  const rows = data.split(/\r?\n/).map( (e) => parse_data(e.split(',')) );
+  records_data = rows;
+  chart.data.datasets.forEach(function (d) { d.data = records_data; });
+  chart.update();
+}
+
+// Récupère les données capteurs
+function ajaxGetSensorData() {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function () { load(this.responseText); }
+  xhttp.open("GET", data_url, true);
+  xhttp.send();
+}
+
+// Initialisation à exécuter lorsque le DOM est chargé
+window.onload = function () {
+  ajaxGetSensorData();
+};
+
+</script>
+</html>

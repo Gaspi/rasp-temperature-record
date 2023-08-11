@@ -37,7 +37,7 @@ $(INSTALL_FOLDER)/%: %
 
 $(CRON_FILE): cron.sh
 	$(Q)mkdir -m 775 -p "$(@D)"
-	$(Q)sed "s+\[INSTALL_FOLDER\]+$(INSTALL_FOLDER)+g" "$<" | sed "s+\[LOG_FOLDER\]+$(LOG_FOLDER)+g" > "$@"
+	$(Q)sed "s+\[INSTALL_FOLDER\]+$(INSTALL_FOLDER)+g" "$<" | sed "s+\[DATA_FOLDER\]+$(DATA_FOLDER)+g" | sed "s+\[LOG_FOLDER\]+$(LOG_FOLDER)+g" > "$@"
 	$(Q)chmod a+rx "$@"
 
 $(DATA_FOLDER):
