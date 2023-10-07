@@ -23,4 +23,3 @@ if __name__ == "__main__":
         }
       }])
     print("[{}] T: {:.1f} C  /  P: {:.0f} hPa  /  H: {:.1f} %  --> {}".format(time, temperature, pressure, humidity, res))
-
