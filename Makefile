@@ -2,12 +2,11 @@ INSTALL_FOLDER = /media/NASHDD1/Server/temperature-record
 
 CRON_FILE = /etc/cron.hourly/temperature-record
 LOG_FOLDER = $(INSTALL_FOLDER)/logs
-DATA_FOLDER = $(INSTALL_FOLDER)/data
 
 # Compile with "make Q=" to display the commands that are run.
 Q = @
 
-LOCAL_SRC = $(shell find ./ -type f -name '*.js' -o -name '*.css' -o -name '*.html' -o -name '*.py')
+LOCAL_SRC = $(shell find ./ -type f -name '*.py')
 DIST_SRC = $(patsubst ./%, $(INSTALL_FOLDER)/%, $(LOCAL_SRC))
 
 .PHONY: all install uninstall reinstall cleardata
@@ -37,10 +36,5 @@ $(INSTALL_FOLDER)/%: %
 
 $(CRON_FILE): cron.sh
 	$(Q)mkdir -m 775 -p "$(@D)"
-	$(Q)sed "s+\[INSTALL_FOLDER\]+$(INSTALL_FOLDER)+g" "$<" | sed "s+\[DATA_FOLDER\]+$(DATA_FOLDER)+g" | sed "s+\[LOG_FOLDER\]+$(LOG_FOLDER)+g" > "$@"
+	$(Q)sed "s+\[INSTALL_FOLDER\]+$(INSTALL_FOLDER)+g" "$<" | sed "s+\[LOG_FOLDER\]+$(LOG_FOLDER)+g" > "$@"
 	$(Q)chmod a+rx "$@"
-
-$(DATA_FOLDER):
-	$(Q)mkdir -m 775 -p "$@"
-	$(Q)chmod -r a+rx "$@"
-

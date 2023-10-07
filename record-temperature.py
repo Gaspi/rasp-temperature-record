@@ -1,21 +1,26 @@
-from sys import argv
-from time import sleep
+import board
+from adafruit_bme280 import basic as adafruit_bme280
 from datetime import datetime
-import Adafruit_DHT
+from influxdb import InfluxDBClient
+
+i2c = board.I2C()  # uses board.SCL and board.SDA
+bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=0x76)
+client = InfluxDBClient('localhost', 8086, 'admin', 'admin', 'sensors')
 
 if __name__ == "__main__":
-    if len(argv) < 2:
-        print("Missing output file argument")
-        exit(1)
-    data = []
-    start = datetime.now()
-    data.append( start.strftime("%Y-%m-%d") )
-    data.append( start.strftime("%H:%M:%S") )
-    for i in range(6):
-        humidity, temperature = Adafruit_DHT.read_retry(11, 4)
-        data.append(str(humidity))
-        data.append(str(temperature))
-        sleep(5)
-    data.append( datetime.now().strftime("%H:%M:%S") )
-    with open(argv[1], "a") as outfile:
-        outfile.write(",".join(data)+"\n")
+    time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    temperature = bme280.temperature
+    pressure    = bme280.pressure
+    humidity    = bme280.humidity
+    res = client.write_points([
+      {
+        "measurement": "bme280",
+        "time": time,
+        "fields": {
+          "temperature": temperature,
+          "pressure"   : pressure,
+          "humidity"   : humidity
+        }
+      }])
+    print("[{}] T: {:.1f} C  /  P: {:.0f} hPa  /  H: {:.1f} %  --> {}".format(time, temperature, pressure, humidity, res))
+
