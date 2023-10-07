@@ -1,0 +1,2 @@
+# Raspberry temperature recorder
+15,45 * * * * root python3 "[INSTALL_FOLDER]/record-temperature.py" >> "[LOG_FOLDER]/temprecord.log"

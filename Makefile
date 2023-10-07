@@ -1,6 +1,6 @@
 INSTALL_FOLDER = /media/NASHDD1/Server/temperature-record
 
-CRON_FILE = /etc/cron.hourly/temperature-record
+CRON_FILE = /etc/cron.d/temperature-record
 LOG_FOLDER = $(INSTALL_FOLDER)/logs
 
 # Compile with "make Q=" to display the commands that are run.
@@ -34,7 +34,7 @@ $(INSTALL_FOLDER)/%: %
 	$(Q)cp "$<" "$@"
 	$(Q)chmod a+rx "$@"
 
-$(CRON_FILE): cron.sh
+$(CRON_FILE): cron
 	$(Q)mkdir -m 775 -p "$(@D)"
 	$(Q)sed "s+\[INSTALL_FOLDER\]+$(INSTALL_FOLDER)+g" "$<" | sed "s+\[LOG_FOLDER\]+$(LOG_FOLDER)+g" > "$@"
 	$(Q)chmod a+rx "$@"
